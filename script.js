@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if(guest){
     document.getElementById("guest-name").innerText =
-      "Kepada Bapak/Ibu/Saudara/i " + guest;
+      "Yang Terhormat " + guest;
   }
 
   /* ======================
@@ -217,42 +217,60 @@ document.querySelector(".rsvp-form").addEventListener("submit", async function(e
     return;
   }
 
-  // KIRIM KE GOOGLE SHEETS
+  // 🔥 TAMPILKAN LANGSUNG (TANPA DELAY)
+  const item = document.createElement("div");
+  item.classList.add("ucapan-item");
+
+  item.innerHTML = `
+    <b>${nama}</b> (${status} - ${jumlah} orang)
+    <br>${ucapan}
+  `;
+
+  document.getElementById("ucapan-list").prepend(item);
+
+  // 🔥 NOTIF CEPAT
+  const notif = document.getElementById("notif");
+  notif.classList.add("show");
+
+  setTimeout(() => {
+    notif.classList.remove("show");
+  }, 2000);
+
+  this.reset();
+
+  // 🔥 KIRIM DATA DI BELAKANG (ASYNC)
   try {
     await fetch(SCRIPT_URL, {
       method: "POST",
-      body: JSON.stringify({
-        nama,
-        jumlah,
-        status,
-        ucapan
-      })
+      body: JSON.stringify({ nama, jumlah, status, ucapan })
     });
-
-    // TAMPILKAN DI WEBSITE
-    const item = document.createElement("div");
-    item.classList.add("ucapan-item");
-
-    item.innerHTML = `
-      <b>${nama}</b> (${status} - ${jumlah} orang)
-      <br>${ucapan}
-    `;
-
-    document.getElementById("ucapan-list").prepend(item);
-
-    // NOTIF
-    const notif = document.getElementById("notif");
-    notif.classList.add("show");
-
-    setTimeout(() => {
-      notif.classList.remove("show");
-    }, 2500);
-
-    this.reset();
-
   } catch (err) {
-    alert("Gagal mengirim data 😢");
+    console.log("Gagal kirim ke server, tapi UI tetap jalan");
   }
+
 });
+
+    /* ======================
+         🎯 COUNTDOWN
+    ====================== */
+
+const targetDate = new Date(DATA.tanggal + " 08:00:00").getTime();
+
+setInterval(() => {
+
+  const now = new Date().getTime();
+  const distance = targetDate - now;
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((distance / (1000 * 60)) % 60);
+  const seconds = Math.floor((distance / 1000) % 60);
+
+  document.getElementById("days").innerText = days;
+  document.getElementById("hours").innerText = hours;
+  document.getElementById("minutes").innerText = minutes;
+  document.getElementById("seconds").innerText = seconds;
+
+}, 1000);
 
 });
