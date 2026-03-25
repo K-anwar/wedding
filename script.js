@@ -250,16 +250,23 @@ document.querySelector(".rsvp-form").addEventListener("submit", async function(e
 
 });
 
-    /* ======================
-         🎯 COUNTDOWN
-    ====================== */
+/* ======================
+   🎯 COUNTDOWN
+====================== */
 
-const targetDate = new Date(DATA.tanggal + " 08:00:00").getTime();
+const targetDate = new Date(
+  DATA.countdown.tanggal + " " + DATA.countdown.waktu
+).getTime();
 
 setInterval(() => {
 
   const now = new Date().getTime();
   const distance = targetDate - now;
+
+  if(distance < 0){
+    document.getElementById("countdown").innerHTML = "Acara sedang berlangsung 🎉";
+    return;
+  }
 
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);

@@ -7,6 +7,11 @@ const DATA = {
 
   tanggal: "12 April 2026",
 
+  countdown: {
+  tanggal: "2026-04-12",
+  waktu: "08:00:00"
+  },
+
   acara: {
     akad: {
       tanggal: "Minggu, 12 April 2026",
