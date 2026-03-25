@@ -248,6 +248,39 @@ document.querySelector(".rsvp-form").addEventListener("submit", async function(e
     console.log("Gagal kirim ke server, tapi UI tetap jalan");
   }
 
+/* ======================
+   🎯 LOAD UCAPAN
+====================== */
+
+async function loadUcapan(){
+  try{
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+
+    const container = document.getElementById("ucapan-list");
+    container.innerHTML = "";
+
+    data.reverse().forEach(item => {
+      const el = document.createElement("div");
+      el.classList.add("ucapan-item");
+
+      el.innerHTML = `
+        <b>${item[0]}</b> (${item[2]} - ${item[1]} orang)
+        <br>${item[3]}
+      `;
+
+      container.appendChild(el);
+    });
+
+  } catch(err){
+    console.log("Gagal load ucapan");
+  }
+}
+
+setInterval(loadUcapan, 5000); // refresh tiap 5 detik
+
+  loadUcapan();
+
 });
 
 /* ======================
