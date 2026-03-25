@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Invitation</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="assets/favicon.ico">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- MUSIC -->
+<audio id="music" loop></audio>
+
+<!-- OPENING -->
+<div id="opening">
+  <div class="opening-content">
+    <p class="small">The Wedding Of</p>
+    <h1 id="nama-opening"></h1>
+    <p class="fade">Sebuah perjalanan cinta yang akan berlabuh dalam ikatan suci</p>
+    <button onclick="openInvitation()">Buka Undangan</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="overlay"></div>
+  <div class="hero-text">
+    <p class="small">The Wedding Of</p>
+
+    <h1 id="nama-pria"></h1>
+    <span>&</span>
+    <h1 id="nama-wanita"></h1>
+
+    <p class="date"></p>
+
+    <blockquote>
+      “Dan di antara tanda-tanda kebesaran-Nya,<br>
+      diciptakan-Nya pasangan untuk saling mencintai.”
+    </blockquote>
+  </div>
+</section>
+
+<!-- OPENING INVITATION -->
+<section class="section">
+  <p>
+    Dengan penuh rasa syukur dan kebahagiaan,<br>
+    kami mengundang Bapak/Ibu/Saudara/i
+  </p>
+
+  <p id="guest-name" class="guest">Tamu undangan</p>
+
+  <p>
+    untuk hadir dalam hari istimewa kami.<br><br>
+    Dua hati yang dipertemukan oleh takdir,<br>
+    kini melangkah bersama menuju ikatan suci.
+  </p>
+</section>
+
+<!-- LOVE STORY -->
+<section class="section dark">
+  <h2>Love Story</h2>
+
+  <h3>Awal Pertemuan</h3>
+  <p>
+    Tidak ada yang kebetulan di dunia ini,<br>
+    setiap pertemuan adalah rencana indah yang telah dituliskan.
+  </p>
+
+  <h3>Perjalanan</h3>
+  <p>
+    Waktu membawa kami saling memahami,<br>
+    hingga akhirnya menemukan arti pulang dalam satu sama lain.
+  </p>
+
+  <h3>Komitmen</h3>
+  <p>
+    Dalam keyakinan yang sama,<br>
+    kami memilih untuk melangkah bersama selamanya.
+  </p>
+</section>
+
+<!-- DETAIL -->
+<section class="section">
+  <h2>Detail Acara</h2>
+  <div class="card" id="akad"></div>
+  <div class="card" id="resepsi"></div>
+</section>
+
+<!-- GALERI -->
+<section class="section dark">
+  <h2>Galeri</h2>
+  <p>
+    Setiap momen adalah cerita,<br>
+    setiap tatapan adalah makna.
+  </p>
+
+  <div class="slider">
+    <div class="slides"></div>
+  </div>
+</section>
+
+<!-- RSVP -->
+<section class="section">
+  <h2>RSVP & Buku Tamu</h2>
+
+  <p>
+    Kehadiran dan doa restu Anda<br>
+    adalah kebahagiaan terbesar bagi kami.
+  </p>
+
+  <form class="rsvp-form">
+
+  <div class="row">
+    <input type="text" name="nama" placeholder="Nama Anda" required>
+    <input type="number" name="jumlah" placeholder="Jumlah Tamu" min="1" required>
+  </div>
+
+  <select name="status" required>
+    <option value="">Konfirmasi Kehadiran</option>
+    <option value="Hadir">Hadir</option>
+    <option value="Tidak Hadir">Tidak Hadir</option>
+  </select>
+
+  <textarea name="ucapan" placeholder="Tulis ucapan & doa..." required></textarea>
+
+  <button type="submit">Kirim Ucapan</button>
+
+</form>
+
+<!-- NOTIF -->
+<div id="notif" class="notif">Terima kasih atas ucapan Anda 💙</div>
+</section>
+
+<!-- UCAPAN -->
+<section class="section dark">
+  <h2>Ucapan & Doa</h2>
+  <div id="ucapan-list"></div>
+</section>
+
+<!-- AMPLOP -->
+<section class="section dark">
+  <h2>Amplop Digital</h2>
+
+  <p>
+    Doa restu Anda adalah hadiah terindah,<br>
+    namun jika ingin memberikan tanda kasih:
+  </p>
+
+  <div id="amplop"></div>
+</section>
+
+<!-- CLOSING -->
+<section class="section">
+  <p>
+    Merupakan suatu kehormatan bagi kami<br>
+    apabila Anda berkenan hadir.<br><br>
+    Atas doa dan restunya, kami ucapkan terima kasih.
+  </p>
+
+  <h2 id="nama-closing"></h2>
+</section>
+
+<footer>
+  <p>Anwar & Rizza Wedding Invitation</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <span class="close" onclick="closeLightbox()">×</span>
+  <img id="lightbox-img">
+  <div class="nav prev" onclick="prevSlide()">‹</div>
+  <div class="nav next" onclick="nextSlide()">›</div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
