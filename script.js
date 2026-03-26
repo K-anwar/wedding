@@ -6,6 +6,8 @@ let images = [];
 let sliderInterval;
 let index = 0;
 
+const SCRIPT_URL = DATA.config.scriptURL;
+
 /* ======================
    🎯 OPEN INVITATION
 ====================== */
@@ -34,7 +36,6 @@ function openLightbox(i){
   lightbox.style.display = "flex";
   img.src = images[i];
 
-  // efek halus
   document.querySelector(".slides").style.opacity = "0.4";
 
   clearInterval(sliderInterval);
@@ -42,9 +43,7 @@ function openLightbox(i){
 
 function closeLightbox(){
   document.getElementById("lightbox").style.display = "none";
-
   document.querySelector(".slides").style.opacity = "1";
-
   startSlider();
 }
 
@@ -84,6 +83,50 @@ function startSlider(){
 }
 
 /* ======================
+   🎯 LOAD UCAPAN
+====================== */
+let loadedCount = 0;
+
+async function loadUcapan(){
+  try{
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+
+    const container = document.getElementById("ucapan-list");
+
+    // balik biar terbaru di atas
+    data.reverse();
+
+    // hanya ambil data baru
+    const newData = data.slice(0, data.length - loadedCount);
+
+    newData.forEach(item => {
+
+      if(!item.nama || !item.ucapan) return;
+
+      const el = document.createElement("div");
+      el.classList.add("ucapan-item");
+       
+      el.classList.add("new-item");
+
+      el.innerHTML = `
+        <b>${item.nama}</b> (${item.status} - ${item.jumlah} orang)
+        <br>${item.ucapan}
+      `;
+
+      // masuk ke atas (bukan bawah)
+      container.prepend(el);
+
+    });
+
+    loadedCount = data.length;
+
+  } catch(err){
+    console.log("Gagal load ucapan", err);
+  }
+}
+
+/* ======================
    🎯 MAIN LOAD
 ====================== */
 document.addEventListener("DOMContentLoaded", () => {
@@ -113,9 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector(".date").innerText = DATA.tanggal;
 
-  /* ======================
-     🎯 NAMA TAMU
-  ====================== */
+  /* NAMA TAMU */
   const params = new URLSearchParams(window.location.search);
   const guest = params.get("to");
 
@@ -124,9 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Yang Terhormat " + guest;
   }
 
-  /* ======================
-     🎯 ACARA
-  ====================== */
+  /* ACARA */
   document.getElementById("akad").innerHTML = `
     <h3>🕌 Akad Nikah</h3>
     <p>${DATA.acara.akad.tanggal}</p>
@@ -143,9 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <a href="${DATA.acara.resepsi.maps}" target="_blank">Buka Maps</a>
   `;
 
-  /* ======================
-     🎯 GALERI
-  ====================== */
+  /* GALERI */
   const slides = document.querySelector(".slides");
   images = DATA.media.galeri;
 
@@ -160,32 +197,21 @@ document.addEventListener("DOMContentLoaded", () => {
   index = images.length;
   slides.style.transform = `translateX(-${index * 220}px)`;
 
-  /* 🔥 FIX CLICK (ANTI MISS) */
   slides.addEventListener("mousedown", () => {
     clearInterval(sliderInterval);
   });
 
   slides.addEventListener("click", function(e){
-
     if(e.target.tagName === "IMG"){
-
       clearInterval(sliderInterval);
-
       const i = parseInt(e.target.dataset.index);
-
-      setTimeout(() => {
-        openLightbox(i);
-      }, 50);
-
+      setTimeout(() => openLightbox(i), 50);
     }
-
   });
 
   startSlider();
 
-  /* ======================
-     🎯 AMPLOP
-  ====================== */
+  /* AMPLOP */
   const amplop = document.getElementById("amplop");
 
   DATA.amplop.forEach(item => {
@@ -200,93 +226,67 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ======================
-     🎯 UCAPAN
+     🎯 RSVP + UCAPAN
   ====================== */
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAIqswY8smT8q7yUZ1S1D6XZjKqrcG_5C6U6gn-C79yU01OhDeFhNhcv29xXbSOHKJ5A/exec";
+  document.querySelector(".rsvp-form").addEventListener("submit", async function(e){
+    e.preventDefault();
 
-document.querySelector(".rsvp-form").addEventListener("submit", async function(e){
-  e.preventDefault();
+    const nama = this.nama.value.trim();
+    const jumlah = this.jumlah.value;
+    const status = this.status.value;
+    const ucapan = this.ucapan.value.trim();
 
-  const nama = this.nama.value.trim();
-  const jumlah = this.jumlah.value;
-  const status = this.status.value;
-  const ucapan = this.ucapan.value.trim();
+    if(!nama || !jumlah || !status || !ucapan){
+      alert("Mohon isi semua data 🙏");
+      return;
+    }
 
-  if(!nama || !jumlah || !status || !ucapan){
-    alert("Mohon isi semua data 🙏");
-    return;
-  }
+    // tampil langsung
+    const item = document.createElement("div");
+    item.classList.add("ucapan-item");
 
-  // 🔥 TAMPILKAN LANGSUNG (TANPA DELAY)
-  const item = document.createElement("div");
-  item.classList.add("ucapan-item");
+    item.innerHTML = `
+      <b>${nama}</b> (${status} - ${jumlah} orang)
+      <br>${ucapan}
+    `;
 
-  item.innerHTML = `
-    <b>${nama}</b> (${status} - ${jumlah} orang)
-    <br>${ucapan}
-  `;
+    document.getElementById("ucapan-list").scrollTop = 0;
 
-  document.getElementById("ucapan-list").prepend(item);
+    const notif = document.getElementById("notif");
+    notif.classList.add("show");
 
-  // 🔥 NOTIF CEPAT
-  const notif = document.getElementById("notif");
-  notif.classList.add("show");
+    setTimeout(() => {
+      notif.classList.remove("show");
+    }, 3000);
 
-  setTimeout(() => {
-    notif.classList.remove("show");
-  }, 2000);
 
-  this.reset();
+    this.reset();
 
-  // 🔥 KIRIM DATA DI BELAKANG (ASYNC)
-  try {
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({ nama, jumlah, status, ucapan })
-    });
-  } catch (err) {
-    console.log("Gagal kirim ke server, tapi UI tetap jalan");
-  }
+    // kirim ke server
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ nama, jumlah, status, ucapan })
+      });
 
-/* ======================
-   🎯 LOAD UCAPAN
-====================== */
+      // refresh data setelah kirim
+      setTimeout(loadUcapan, 1000);
 
-async function loadUcapan(){
-  try{
-    const res = await fetch(SCRIPT_URL);
-    const data = await res.json();
+    } catch (err) {
+      console.log("Gagal kirim");
+    }
 
-    const container = document.getElementById("ucapan-list");
-    container.innerHTML = "";
+  });
 
-    data.reverse().forEach(item => {
-      const el = document.createElement("div");
-      el.classList.add("ucapan-item");
-
-      el.innerHTML = `
-        <b>${item[0]}</b> (${item[2]} - ${item[1]} orang)
-        <br>${item[3]}
-      `;
-
-      container.appendChild(el);
-    });
-
-  } catch(err){
-    console.log("Gagal load ucapan");
-  }
-}
-
-setInterval(loadUcapan, 5000); // refresh tiap 5 detik
-
+  /* LOAD AWAL + AUTO REFRESH */
   loadUcapan();
+  setInterval(loadUcapan, DATA.config.refreshInterval);
 
 });
 
 /* ======================
    🎯 COUNTDOWN
 ====================== */
-
 const targetDate = new Date(
   DATA.countdown.tanggal + " " + DATA.countdown.waktu
 ).getTime();
@@ -301,16 +301,16 @@ setInterval(() => {
     return;
   }
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((distance / (1000 * 60)) % 60);
-  const seconds = Math.floor((distance / 1000) % 60);
+  document.getElementById("days").innerText =
+    Math.floor(distance / (1000 * 60 * 60 * 24));
 
-  document.getElementById("days").innerText = days;
-  document.getElementById("hours").innerText = hours;
-  document.getElementById("minutes").innerText = minutes;
-  document.getElementById("seconds").innerText = seconds;
+  document.getElementById("hours").innerText =
+    Math.floor((distance / (1000 * 60 * 60)) % 24);
+
+  document.getElementById("minutes").innerText =
+    Math.floor((distance / (1000 * 60)) % 60);
+
+  document.getElementById("seconds").innerText =
+    Math.floor((distance / 1000) % 60);
 
 }, 1000);
-
-});

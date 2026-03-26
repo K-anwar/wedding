@@ -12,6 +12,11 @@ const DATA = {
   waktu: "08:00:00"
   },
 
+  config: {
+    scriptURL: "https://script.google.com/macros/s/AKfycbxynEpgBGD2vuXqcNugvGpm9gi7OIh1d8oOmY3fviP4nczMW7LtfsFiVT1jO3K1VdK1zg/exec",
+    refreshInterval: 5000
+  },
+
   acara: {
     akad: {
       tanggal: "Minggu, 12 April 2026",

@@ -236,14 +236,64 @@ body {
 ====================== */
 #ucapan-list {
   margin-top: 20px;
+  max-height: 400px; /* tinggi box */
+  overflow-y: auto;
+  padding-right: 10px;
+  position: relative;
 }
 
+#ucapan-list::after {
+  content: "";
+  position: sticky;
+  bottom: 0;
+  display: block;
+  height: 40px;
+  background: linear-gradient(transparent, var(--bg));
+}
+
+/* SCROLLBAR CUSTOM (Luxury) */
+#ucapan-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#ucapan-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#ucapan-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--primary), var(--secondary));
+  border-radius: 10px;
+}
+
+/* ITEM */
 .ucapan-item {
   background: rgba(255,255,255,0.08);
   padding: 15px;
   border-radius: 12px;
-  margin: 10px 0;
+  margin-bottom: 12px;
   text-align: left;
+  animation: fadeUp 0.5s ease;
+}
+
+.new-item {
+  animation: glow 1s ease;
+}
+
+@keyframes glow {
+  0% { background: rgba(96,165,250,0.3); }
+  100% { background: rgba(255,255,255,0.08); }
+}
+
+/* ANIMASI MASUK */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ======================
