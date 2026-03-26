@@ -5,6 +5,10 @@ let currentIndex = 0;
 let images = [];
 let sliderInterval;
 let index = 0;
+let allUcapan = [];
+let visibleCount = 20;
+let increment = 10;
+let lastTotal = 0;
 
 const SCRIPT_URL = DATA.config.scriptURL;
 
@@ -85,46 +89,111 @@ function startSlider(){
 /* ======================
    🎯 LOAD UCAPAN
 ====================== */
-let loadedCount = 0;
-
 async function loadUcapan(){
   try{
     const res = await fetch(SCRIPT_URL);
     const data = await res.json();
 
-    const container = document.getElementById("ucapan-list");
-
-    // balik biar terbaru di atas
     data.reverse();
 
-    // hanya ambil data baru
-    const newData = data.slice(0, data.length - loadedCount);
+    // jika pertama kali load
+    if(allUcapan.length === 0){
+      allUcapan = data;
+      lastTotal = data.length;
+      renderUcapan();
+      return;
+    }
 
-    newData.forEach(item => {
+    // cek apakah ada data baru
+    if(data.length > lastTotal){
 
-      if(!item.nama || !item.ucapan) return;
+      const newItems = data.slice(0, data.length - lastTotal);
 
-      const el = document.createElement("div");
-      el.classList.add("ucapan-item");
-       
-      el.classList.add("new-item");
+      allUcapan = data;
+      lastTotal = data.length;
 
-      el.innerHTML = `
-        <b>${item.nama}</b> (${item.status} - ${item.jumlah} orang)
-        <br>${item.ucapan}
-      `;
-
-      // masuk ke atas (bukan bawah)
-      container.prepend(el);
-
-    });
-
-    loadedCount = data.length;
+      appendUcapan(newItems);
+    }
 
   } catch(err){
     console.log("Gagal load ucapan", err);
   }
 }
+
+/* ======================
+   🎯 APPEND UCAPAN
+====================== */
+function appendUcapan(newItems){
+  const container = document.getElementById("ucapan-list");
+
+  newItems.forEach(item => {
+
+    if(!item.nama || !item.ucapan) return;
+
+    const el = document.createElement("div");
+    el.classList.add("ucapan-item", "new-item");
+
+    el.innerHTML = `
+      <b>${item.nama}</b> (${item.status} - ${item.jumlah} orang)
+      <br>${item.ucapan}
+    `;
+
+    // MASUK KE ATAS (tanpa reset)
+    container.prepend(el);
+  });
+}
+
+/* ======================
+   🎯 RENDER UCAPAN
+====================== */
+function renderUcapan(){
+  const container = document.getElementById("ucapan-list");
+  container.innerHTML = "";
+
+  const showData = allUcapan.slice(0, visibleCount);
+
+  showData.forEach(item => {
+    if(!item.nama || !item.ucapan) return;
+
+    const el = document.createElement("div");
+    el.classList.add("ucapan-item");
+
+    el.innerHTML = `
+      <b>${item.nama}</b> (${item.status} - ${item.jumlah} orang)
+      <br>${item.ucapan}
+    `;
+
+    container.appendChild(el);
+  });
+
+  updateLoadMoreButton();
+}
+
+/* ======================
+    🎯 UPDATE TOMBOL LOAD MORE
+====================== */
+function updateLoadMoreButton(){
+  const btn = document.getElementById("loadMoreBtn");
+
+  // tampilkan hanya jika lebih dari 20
+  if(allUcapan.length > 20 && visibleCount < allUcapan.length){
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+function loadMoreUcapan(){
+  visibleCount += increment;
+
+  if(visibleCount > allUcapan.length){
+    visibleCount = allUcapan.length;
+  }
+
+  renderUcapan();
+}
+
+
 
 /* ======================
    🎯 MAIN LOAD
