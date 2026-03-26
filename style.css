@@ -92,13 +92,29 @@ body {
   padding: 60px 20px;
   text-align: center;
   max-width: 900px;
-  margin: 0 auto;
+  margin: 40px auto;
+}
+
+.section + .section {
+  margin-top: 50px;
+}
+
+.section.dark::before {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 60%;
+  margin: 0 auto 25px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
 }
 
 /* DARK */
 .dark {
   background: rgba(255,255,255,0.05);
   border-radius: 20px;
+  padding: 30px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* efek mengambang */
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 /* CARD */
@@ -246,10 +262,12 @@ body {
 ====================== */
 #ucapan-list {
   margin-top: 20px;
-  max-height: 400px; /* tinggi box */
+  max-height: 400px;  
   overflow-y: auto;
-  padding-right: 10px;
   position: relative;
+  padding: 10px;
+  border-radius: 15px;
+  background: rgba(0,0,0,0.15);
 }
 
 #ucapan-list::after {
