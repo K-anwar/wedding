@@ -193,6 +193,28 @@ function loadMoreUcapan(){
   renderUcapan();
 }
 
+/* ======================
+   🎯 LOADING UCAPAN
+====================== */
+function showLoadingUcapan(nama, status, jumlah){
+  const container = document.getElementById("ucapan-list");
+
+  const el = document.createElement("div");
+  el.classList.add("ucapan-item", "loading-item");
+  el.id = "temp-ucapan";
+
+  el.innerHTML = `
+    <b>${nama}</b> (${status} - ${jumlah} orang)
+    <br>⏳ Mengirim ucapan...
+  `;
+
+  container.prepend(el);
+}
+
+function removeLoadingUcapan(){
+  const temp = document.getElementById("temp-ucapan");
+  if(temp) temp.remove();
+}
 
 /* ======================
    🎯 MAIN LOAD
@@ -309,14 +331,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // tampil langsung
-    const item = document.createElement("div");
-    item.classList.add("ucapan-item");
-
-    item.innerHTML = `
-      <b>${nama}</b> (${status} - ${jumlah} orang)
-      <br>${ucapan}
-    `;
+    // tampil loading dulu
+    showLoadingUcapan(nama, status, jumlah);
 
     document.getElementById("ucapan-list").scrollTop = 0;
 
@@ -338,7 +354,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // refresh data setelah kirim
-      setTimeout(loadUcapan, 1000);
+      setTimeout(() => {
+      removeLoadingUcapan();
+      loadUcapan();
+      }, 1000);
 
     } catch (err) {
       console.log("Gagal kirim");

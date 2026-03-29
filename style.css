@@ -235,6 +235,37 @@ body {
   bottom: 40px;
 }
 
+.loading-item {
+  position: relative;
+  overflow: hidden;
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* layer shimmer di atas */
+.loading-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.2),
+    transparent
+  );
+  animation: shimmerMove 1.2s infinite;
+}
+
+@keyframes shimmerMove {
+  100% {
+    left: 150%;
+  }
+}
+
 /* ======================
    🎯 AMPLOP
 ====================== */
