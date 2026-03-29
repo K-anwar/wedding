@@ -9,7 +9,9 @@ let allUcapan = [];
 let visibleCount = 20;
 let increment = 10;
 let lastTotal = 0;
+let lastSubmitTime = 0;
 
+const SUBMIT_DELAY = 5000;
 const SCRIPT_URL = DATA.config.scriptURL;
 
 /* ======================
@@ -96,7 +98,6 @@ async function loadUcapan(){
 
     data.reverse();
 
-    // jika pertama kali load
     if(allUcapan.length === 0){
       allUcapan = data;
       lastTotal = data.length;
@@ -104,14 +105,10 @@ async function loadUcapan(){
       return;
     }
 
-    // cek apakah ada data baru
     if(data.length > lastTotal){
-
       const newItems = data.slice(0, data.length - lastTotal);
-
       allUcapan = data;
       lastTotal = data.length;
-
       appendUcapan(newItems);
     }
 
@@ -121,7 +118,7 @@ async function loadUcapan(){
 }
 
 /* ======================
-   🎯 APPEND UCAPAN
+   🎯 APPEND UCAPAN (MORPH)
 ====================== */
 function appendUcapan(newItems){
   const container = document.getElementById("ucapan-list");
@@ -130,34 +127,62 @@ function appendUcapan(newItems){
 
     if(!item.nama || !item.ucapan) return;
 
-    // 🔥 HAPUS optimistic item jika sama
-    const tempItems = document.querySelectorAll(".sending-item");
+    // 🔥 cari optimistic item
+    const existing = document.querySelectorAll(".sending-item");
 
-    tempItems.forEach(el => {
+    let matched = null;
+
+    existing.forEach(el => {
       if(
-        el.innerText.includes(item.nama) &&
-        el.innerText.includes(item.ucapan)
+        el.dataset.nama === item.nama &&
+        el.dataset.ucapan === item.ucapan
       ){
-        el.style.opacity = "0";
-        setTimeout(() => el.remove(), 300);
+        matched = el;
       }
     });
 
-    // tampilkan data asli
-    const el = document.createElement("div");
-    el.classList.add("ucapan-item", "new-item");
+    if(matched){
+      const statusEl = matched.querySelector(".status");
 
-    el.innerHTML = `
-      <b>${item.nama}</b> (${item.status} - ${item.jumlah} orang)
-      <br>${item.ucapan}
-    `;
+      if(statusEl){
+        statusEl.innerHTML = "✅ Terkirim";
+        statusEl.classList.add("sent");
 
-    container.prepend(el);
+        setTimeout(() => {
+          statusEl.style.opacity = "0";
+          setTimeout(() => {
+            statusEl.style.display = "none";
+          }, 300);
+        }, 2000);
+      }
+
+      matched.classList.remove("sending-item");
+      matched.classList.add("sent-item");
+
+    } else {
+
+      // 🔥 anti duplikat
+      const existingText = container.innerText;
+      if(existingText.includes(item.nama) && existingText.includes(item.ucapan)){
+        return;
+      }
+
+      const el = document.createElement("div");
+      el.classList.add("ucapan-item", "new-item");
+
+      el.innerHTML = `
+        <b>${item.nama}</b> (${item.status} - ${item.jumlah} orang)
+        <br>${item.ucapan}
+      `;
+
+      container.prepend(el);
+    }
+
   });
 }
 
 /* ======================
-   🎯 RENDER UCAPAN
+   🎯 RENDER
 ====================== */
 function renderUcapan(){
   const container = document.getElementById("ucapan-list");
@@ -183,13 +208,12 @@ function renderUcapan(){
 }
 
 /* ======================
-    🎯 UPDATE TOMBOL LOAD MORE
+   🎯 LOAD MORE
 ====================== */
 function updateLoadMoreButton(){
   const btn = document.getElementById("loadMoreBtn");
 
-  // tampilkan hanya jika lebih dari 20
-  if(allUcapan.length > 20 && visibleCount < allUcapan.length){
+  if(allUcapan.length > visibleCount){
     btn.style.display = "block";
   } else {
     btn.style.display = "none";
@@ -207,34 +231,50 @@ function loadMoreUcapan(){
 }
 
 /* ======================
-   🎯 ADD OPTIMISTIC UCAPAN
+   🎯 OPTIMISTIC UI
 ====================== */
-function addOptimisticUcapan(nama, status, jumlah, ucapan){
+function addOptimisticUcapan(nama, status, jumlah, finalText){
   const container = document.getElementById("ucapan-list");
-
-  const id = Date.now(); // ID unik
 
   const el = document.createElement("div");
   el.classList.add("ucapan-item", "sending-item");
-  el.dataset.tempId = id;
+
+  el.dataset.nama = nama;
+  el.dataset.ucapan = finalText; // ✅ FIX
 
   el.innerHTML = `
     <b>${nama}</b> (${status} - ${jumlah} orang)
-    <br>${ucapan}
-    <div class="status">⏳ Mengirim...</div>
+    <br>${finalText}
+    <div class="status sending">⏳ Mengirim...</div>
   `;
 
   container.prepend(el);
 
-  return id;
+  return el;
 }
 
-function markAsSent(el){
-  const status = el.querySelector(".status");
-  if(status){
-    status.innerHTML = "✅ Terkirim";
-  }
+/* ======================
+   🎯 NORMALIZE
+====================== */
+function normalize(text){
+  return text
+    .toLowerCase()
+    .replace(/[4@]/g, "a")
+    .replace(/[3]/g, "e")
+    .replace(/[1!]/g, "i")
+    .replace(/[0]/g, "o")
+    .replace(/[5]/g, "s")
+    .replace(/[^a-z0-9]/g, "");
 }
+
+/* ======================
+   🎯 SIMPLIFY
+====================== */
+function simplify(text){
+  return text
+    .replace(/(.)\1+/g, "$1") // huruf berulang → 1
+}
+
 
 /* ======================
    🎯 MAIN LOAD
@@ -346,13 +386,105 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = this.status.value;
     const ucapan = this.ucapan.value.trim();
 
+    // 🔥 VALIDASI
     if(!nama || !jumlah || !status || !ucapan){
       alert("Mohon isi semua data 🙏");
       return;
     }
 
+    if(nama.length < 2){
+      alert("Nama terlalu pendek 🙏");
+      return;
+    }
+
+    if(ucapan.length < 5){
+      alert("Ucapan terlalu pendek 🙏");
+      return;
+    }
+
+    if(ucapan.length > 200){
+      alert("Ucapan terlalu panjang 🙏");
+      return;
+    }
+
+    // 🔥 ANTI SPAM DELAY
+    const now = Date.now();
+    if(now - lastSubmitTime < SUBMIT_DELAY){
+      alert("Tunggu beberapa detik 🙏");
+      return;
+    }
+    lastSubmitTime = now;
+
+    // 🔥 ANTI DUPLIKAT
+    const recent = allUcapan.slice(0, 5);
+    const spamCheck = recent.some(item =>
+      item.nama === nama && item.ucapan === ucapan
+    );
+    if(spamCheck){
+      alert("Ucapan sudah pernah dikirim 🙏");
+      return;
+    }
+
+    const bannedHard = [
+          "anjing","anying","anjg","anj","anjir","anjay",
+          "bangsat","bngst","bngsat","bgst","bgstt","bngsd","bgsd",
+          "kontol","kontl","kntl","kntol",
+          "memek","memk","mmk",
+          "ngentot","ngentd","ngntt",
+          "ngewe","ngwe","ngweh",
+          "jancok","jembut","itil",
+          "puki","pepek","titit","toket",
+          "babi","asu",
+          "tai","bangke","bangkai",
+          "lonte","pelacur",
+          "coli","colmek","coly","colay","coliing",
+          "ewe","ewek",
+          "ngocok","masturbasi",
+          "bokep","porn","porno","mesum"
+    ];
+
+    const bannedSoft = [
+          "goblok","tolol","bodoh","dungu","idiot","bego",
+          "kampret","brengsek","bajingan","keparat","laknat",
+          "setan","sialan",
+          "monyet","kunyuk",
+          "sampah","gembel","murahan","pecundang",
+          "busuk","jorok","dekil","burik",
+          "kampungan","norak","alay","lebay",
+          "sok","songong","angkuh",
+          "bacot","gajelas",
+          "sarap","ghendeng","geblek",
+          "banci","bencong",
+          "pantat","silit",
+          "jelek"
+    ];
+    
+    const cleanText = simplify(normalize(ucapan));
+
+    let finalText = ucapan;
+
+    for(let word of bannedHard){
+      if(cleanText.includes(word)){
+        alert("Mohon gunakan kata yang sopan 🙏");
+      return;
+      }
+    }
+
+    function censorWord(word){
+    return `<span class="censored">${"*".repeat(word.length)}</span>`;
+    }
+
+    bannedSoft.forEach(word => {
+    const regex = new RegExp(word, "gi");
+    finalText = finalText.replace(regex, censorWord(word));
+    });
+
     // tampil loading dulu
-    const tempId = addOptimisticUcapan(nama, status, jumlah, ucapan);
+    const tempEl = addOptimisticUcapan(nama, status, jumlah, finalText);
+
+    const btn = this.querySelector("button");
+    btn.disabled = true;
+    btn.innerText = "Mengirim...";
 
     document.getElementById("ucapan-list").scrollTop = 0;
 
@@ -370,14 +502,21 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await fetch(SCRIPT_URL, {
         method: "POST",
-        body: JSON.stringify({ nama, jumlah, status, ucapan })
+        body: JSON.stringify({ 
+        nama, 
+        jumlah, 
+        status, 
+        ucapan: finalText 
+        }),
       });
+      btn.disabled = false;
+      btn.innerText = "Kirim Ucapan";
 
-      // refresh data setelah kirim
-      markAsSent(tempEl);
-
+    
     } catch (err) {
       console.log("Gagal kirim");
+      btn.disabled = false;
+      btn.innerText = "Kirim Ucapan";
     }
 
   });

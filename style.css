@@ -216,6 +216,11 @@ body {
   font-weight: 500;
 }
 
+.rsvp-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .notif {
   position: fixed;
   bottom: 20px;
@@ -237,13 +242,13 @@ body {
 
 .sending-item {
   border-left: 3px solid #facc15;
-  transition: 0.3s;
 }
 
-.sending-item .status {
+.status {
   font-size: 12px;
   margin-top: 5px;
   opacity: 0.7;
+  transition: 0.3s;
 }
 
 .sending-item .status::after {
@@ -255,6 +260,27 @@ body {
   0% { content: ""; }
   50% { content: "."; }
   100% { content: ".."; }
+}
+
+.sent-item {
+  border-left: 3px solid #22c55e;
+  background: rgba(34,197,94,0.08);
+}
+
+.status.sent {
+  color: #22c55e;
+  font-weight: 500;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); }
+  to { transform: scale(1); }
+}
+
+.censored {
+  color: #f87171;
+  font-weight: bold;
 }
 
 /* ======================
