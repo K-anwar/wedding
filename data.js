@@ -26,7 +26,7 @@ const DATA = {
     },
     resepsi: {
       tanggal: "Minggu, 12 April 2026",
-      waktu: "10.00 WIB",
+      waktu: "13.00 WIB",
       tempat: "Rumah Mempelai Wanita",
       maps: "https://maps.app.goo.gl/enUeV3b3VVk4S6cR8"
     }
