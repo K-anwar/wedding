@@ -130,6 +130,20 @@ function appendUcapan(newItems){
 
     if(!item.nama || !item.ucapan) return;
 
+    // 🔥 HAPUS optimistic item jika sama
+    const tempItems = document.querySelectorAll(".sending-item");
+
+    tempItems.forEach(el => {
+      if(
+        el.innerText.includes(item.nama) &&
+        el.innerText.includes(item.ucapan)
+      ){
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 300);
+      }
+    });
+
+    // tampilkan data asli
     const el = document.createElement("div");
     el.classList.add("ucapan-item", "new-item");
 
@@ -138,7 +152,6 @@ function appendUcapan(newItems){
       <br>${item.ucapan}
     `;
 
-    // MASUK KE ATAS (tanpa reset)
     container.prepend(el);
   });
 }
@@ -194,26 +207,33 @@ function loadMoreUcapan(){
 }
 
 /* ======================
-   🎯 LOADING UCAPAN
+   🎯 ADD OPTIMISTIC UCAPAN
 ====================== */
-function showLoadingUcapan(nama, status, jumlah){
+function addOptimisticUcapan(nama, status, jumlah, ucapan){
   const container = document.getElementById("ucapan-list");
 
+  const id = Date.now(); // ID unik
+
   const el = document.createElement("div");
-  el.classList.add("ucapan-item", "loading-item");
-  el.id = "temp-ucapan";
+  el.classList.add("ucapan-item", "sending-item");
+  el.dataset.tempId = id;
 
   el.innerHTML = `
     <b>${nama}</b> (${status} - ${jumlah} orang)
-    <br>⏳ Mengirim ucapan...
+    <br>${ucapan}
+    <div class="status">⏳ Mengirim...</div>
   `;
 
   container.prepend(el);
+
+  return id;
 }
 
-function removeLoadingUcapan(){
-  const temp = document.getElementById("temp-ucapan");
-  if(temp) temp.remove();
+function markAsSent(el){
+  const status = el.querySelector(".status");
+  if(status){
+    status.innerHTML = "✅ Terkirim";
+  }
 }
 
 /* ======================
@@ -332,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // tampil loading dulu
-    showLoadingUcapan(nama, status, jumlah);
+    const tempId = addOptimisticUcapan(nama, status, jumlah, ucapan);
 
     document.getElementById("ucapan-list").scrollTop = 0;
 
@@ -354,10 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // refresh data setelah kirim
-      setTimeout(() => {
-      removeLoadingUcapan();
-      loadUcapan();
-      }, 1000);
+      markAsSent(tempEl);
 
     } catch (err) {
       console.log("Gagal kirim");
