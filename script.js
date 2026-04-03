@@ -30,12 +30,12 @@ window.addEventListener("error", function(e){
    🔒 VALIDASI CONFIG
 ====================== */
 if(typeof DATA === "undefined"){
-  alert("Config tidak ditemukan ❌");
+  showToast("Config tidak ditemukan❌", "error");
   throw new Error("DATA undefined");
 }
 
 if(!DATA.config || !DATA.config.scriptURL){
-  alert("Config tidak lengkap ❌");
+  showToast("Config tidak lengkap ❌", "error");
   throw new Error("Config invalid");
 }
 
@@ -60,7 +60,7 @@ function openInvitation(){
 ====================== */
 function copyRekening(nomor){
   navigator.clipboard.writeText(nomor);
-  alert("Nomor berhasil disalin");
+  showToast("Nomor berhasil disalin", "success");
 }
 
 /* ======================
@@ -340,6 +340,31 @@ document.addEventListener("visibilitychange", () => {
 });
 
 /* ======================
+   🎯 TOAST NOTIFICATION
+====================== */
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+  if(!container) return;
+
+  const maxToast = 3;
+  if(container.children.length >= maxToast){
+    container.removeChild(container.firstChild);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerText = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(100%)";
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+/* ======================
    🎯 MAIN LOAD
 ====================== */
 document.addEventListener("DOMContentLoaded", () => {
@@ -451,46 +476,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 🔒 VALIDASI ORIGIN
     if(window.location.origin !== allowedOrigin){
-    alert("Akses tidak valid ❌");
+    showToast("Akses tidak valid ❌", "error");
     return;
     }
 
     // 🔥 VALIDASI
     if(!nama || !jumlah || !status || !ucapan){
-      alert("Mohon isi semua data 🙏");
+      showToast("Mohon isi semua data 🙏", "warning");
       return;
     }
 
     if(nama.length < 2){
-      alert("Nama terlalu pendek 🙏");
+      showToast("Nama terlalu pendek 🙏", "warning");
       return;
     }
 
     if(nama.length > 30){
-      alert("Nama terlalu panjang 🙏");
+      showToast("Nama terlalu panjang 🙏", "warning");
       return;
     }
 
     if(ucapan.length < 5){
-      alert("Ucapan terlalu pendek 🙏");
+      showToast("Ucapan terlalu pendek 🙏", "warning");
       return;
     }
 
     if(ucapan.length > 200){
-      alert("Ucapan terlalu panjang 🙏");
+      showToast("Ucapan terlalu panjang 🙏", "warning");
       return;
     }
 
     // 🔒 ANTI LINK SPAM
     if(/http|www|\.com/i.test(ucapan)){
-      alert("Tidak boleh mengandung link 🙏");
+      showToast("Tidak boleh mengandung link 🙏", "warning");
       return;
     }
 
     // 🔥 ANTI SPAM DELAY
     const now = Date.now();
     if(now - lastSubmitTime < SUBMIT_DELAY){
-      alert("Tunggu beberapa detik 🙏");
+      showToast("Tunggu beberapa detik 🙏", "warning");
       return;
     }
     lastSubmitTime = now;
@@ -501,7 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
       item.nama === nama && item.ucapan === ucapan
     );
     if(spamCheck){
-      alert("Ucapan sudah pernah dikirim 🙏");
+      showToast("Ucapan sudah pernah dikirim 🙏", "warning");
       return;
     }
 
@@ -545,7 +570,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     for(let word of bannedHard){
       if(cleanText.includes(word)){
-        alert("Mohon gunakan kata yang sopan 🙏");
+        showToast("Mohon gunakan kata yang sopan 🙏", "warning");
       return;
       }
     }
@@ -603,7 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
       result = await res.json();
     } catch {
       tempEl.remove();
-      alert("Server tidak merespon ❌");
+      showToast("Server tidak merespon ❌", "error");
 
       btn.disabled = false;
       btn.innerText = "Kirim Ucapan";
@@ -615,13 +640,13 @@ document.addEventListener("DOMContentLoaded", () => {
     tempEl.remove();
 
     if(result.result === "spam"){
-      alert("Terlalu cepat mengirim 🙏");
+      showToast("Terlalu cepat mengirim 🙏", "warning");
     } else if(result.result === "forbidden"){
-      alert("Akses ditolak ❌");
+      showToast("Akses ditolak ❌", "error");
     } else if(result.result === "unauthorized"){
-      alert("Token salah ❌");
+      showToast("Token salah ❌", "error");
     } else {
-      alert("Gagal mengirim ❌");
+      showToast("Gagal mengirim ❌", "error");
     }
 
     btn.disabled = false;
@@ -635,7 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 } catch (err) {
   tempEl.remove();
-  alert("Gagal mengirim, cek koneksi atau coba lagi 🙏");
+  showToast("Gagal mengirim, cek koneksi atau coba lagi 🙏", "warning");
   console.log(err);
 
   btn.disabled = false;
