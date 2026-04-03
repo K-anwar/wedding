@@ -475,6 +475,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = this.status.value;
     const ucapan = this.ucapan.value.trim();
 
+    
+    if(isSubmitting) return;
+      isSubmitting = true;
+
     // 🔒 VALIDASI ORIGIN
     if(window.location.origin !== allowedOrigin){
     showToast("Akses tidak valid ❌", "error");
@@ -604,9 +608,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     this.reset();
-
-    if(isSubmitting) return;
-      isSubmitting = true;
 
     // kirim ke server
     try {
