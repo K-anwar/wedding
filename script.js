@@ -12,6 +12,8 @@ let refreshInterval;
 let offset = 0;
 const LIMIT = 20;
 let hasMore = true;
+let lastLoadTime = 0;
+let scrollTimeout;
 
 const SUBMIT_DELAY = 5000;
 const SCRIPT_URL = DATA.config.scriptURL;
@@ -129,10 +131,13 @@ async function loadUcapan(){
   isLoading = true;
   
   let localTimeout;
+  const loader = document.getElementById("loading-more");
 
   try{
     const controller = new AbortController();
     localTimeout = setTimeout(() => controller.abort(), 7000);
+
+    if(loader) loader.style.display = "block";
 
     const res = await fetch(`${SCRIPT_URL}?limit=${LIMIT}&offset=${offset}`, {
       signal: controller.signal,
@@ -166,6 +171,13 @@ async function loadUcapan(){
       hasMore = false;
     }
 
+    if(!hasMore){
+    if(loader){
+      loader.style.display = "block";
+      loader.innerText = "Semua ucapan sudah ditampilkan 🎉";
+      }
+    }
+
     allUcapan = [...allUcapan, ...data];
 
     if(allUcapan.length > 100){
@@ -181,6 +193,10 @@ async function loadUcapan(){
       console.log("Error load", err);
     }
   } finally {
+    if(loader && hasMore){
+      loader.style.display = "none";
+      loader.innerText = "⏳ Memuat data...";
+    }
     clearTimeout(localTimeout);
     isLoading = false;
   }
@@ -210,24 +226,6 @@ function renderUcapan(){
 
     container.appendChild(el);
   });
-
-  // 🔥 baru render tombol (DI LUAR LOOP)
-  const wrapper = document.getElementById("load-more-wrapper");
-  if(!wrapper) return;
-
-  wrapper.innerHTML = "";
-
-  if(hasMore){
-    const loadMore = document.createElement("button");
-    loadMore.classList.add("load-more");
-    loadMore.innerText = "Muat lebih banyak";
-
-    loadMore.addEventListener("click", async () => {
-      await loadUcapan();
-    });
-
-    wrapper.appendChild(loadMore);
-  }
 }
 
 /* ======================
@@ -497,7 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     lastSubmitTime = now;
 
-    // 🔥 ANTI DUPLIKAT
+      // 🔥 ANTI DUPLIKAT
     const recent = allUcapan.slice(0, 5);
     const spamCheck = recent.some(item =>
       item.nama === nama && item.ucapan === ucapan
@@ -675,13 +673,6 @@ function initReveal(){
 }
 initReveal();
 
-window.addEventListener("scroll", () => {
-  const scrollY = window.scrollY;
-  const hero = document.querySelector(".hero");
-
-  hero.style.backgroundPositionY = scrollY * 0.5 + "px";
-});
-
 /* ======================
    🎯 PARALLAX MOUSE (3D EFFECT)
 ====================== */
@@ -809,3 +800,40 @@ setInterval(() => {
     Math.floor((distance / 1000) % 60);
 
   }, 1000);
+
+/* ======================
+   🎯 INFINITE SCROLL
+====================== */
+window.addEventListener("scroll", () => {
+
+  if(scrollTimeout) return;
+
+  scrollTimeout = setTimeout(() => {
+
+    const scrollY = window.scrollY;
+    const hero = document.querySelector(".hero");
+    if(hero){
+      hero.style.backgroundPositionY = scrollY * 0.5 + "px";
+    }
+
+    if(!hasMore || isLoading){
+      scrollTimeout = null;
+      return;
+    }
+
+    const now = Date.now();
+    if(now - lastLoadTime < 1000) return;
+    lastLoadTime = now;
+
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const triggerPoint = document.body.offsetHeight - 200;
+
+    if(scrollPosition >= triggerPoint){
+      loadUcapan();
+    }
+
+    scrollTimeout = null;
+
+  }, 100);
+
+});
