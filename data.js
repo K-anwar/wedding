@@ -1,23 +1,48 @@
 const DATA = {
 
+  /* ======================
+     ⚙️ CONFIG (WAJIB)
+  ====================== */
+  config: {
+    scriptURL: "https://script.google.com/macros/s/AKfycbwuKXrJP9baxXC6lkqKRC0GQoGExxPpke2ur1a2qUp4FkRdmKZb0O_JjAhCa7J88SM4BQ/exec",
+    origin: "https://k-anwar.github.io",
+    refreshInterval: 15000
+  },
+
+  /* ======================
+     🎨 THEME
+  ====================== */
+  theme: {
+    primary: "#1e3a8a",
+    secondary: "#60a5fa",
+    background: "#0f172a",
+    text: "#ffffff"
+  },
+
+  /* ======================
+     👰 PASANGAN
+  ====================== */
   pasangan: {
     pria: "Khoirul Anwar",
     wanita: "Rizza Lutfi Khasanah"
   },
 
-  tanggal: "12 April 2026",
+  /* ======================
+     📅 TANGGAL
+  ====================== */
+  tanggal: "Minggu, 12 April 2026",
 
+  /* ======================
+     ⏳ COUNTDOWN
+  ====================== */
   countdown: {
-  tanggal: "2026-04-12",
-  waktu: "08:00:00"
+    tanggal: "2026-04-12",
+    waktu: "08:00:00"
   },
 
-  config: {
-    scriptURL: "https://script.google.com/macros/s/AKfycbwuKXrJP9baxXC6lkqKRC0GQoGExxPpke2ur1a2qUp4FkRdmKZb0O_JjAhCa7J88SM4BQ/exec",
-    refreshInterval: 10000,
-    origin: "https://k-anwar.github.io"
-  },
-
+  /* ======================
+     📍 ACARA
+  ====================== */
   acara: {
     akad: {
       tanggal: "Minggu, 12 April 2026",
@@ -33,25 +58,9 @@ const DATA = {
     }
   },
 
-  // 🔥 MULTI AMPLOP
-  amplop: [
-    {
-      bank: "BCA",
-      nomor: "3560194012",
-      nama: "Khoirul Anwar"
-    },
-    {
-      bank: "BRI",
-      nomor: "3793 0105 1428 538",
-      nama: "Rizza Lutfi Khasanah"
-    },
-    {
-      bank: "MANDIRI",
-      nomor: "1360031676460",
-      nama: "Rizza Lutfi Khasanah"
-    }
-  ],
-
+  /* ======================
+     🖼️ MEDIA
+  ====================== */
   media: {
     hero: "assets/img/foto.JPG",
     musik: "assets/music/music.mp3",
@@ -71,11 +80,25 @@ const DATA = {
     ]
   },
 
-  theme: {
-    primary: "#1e3a8a",
-    secondary: "#60a5fa",
-    background: "#0f172a",
-    text: "#ffffff"
-  }
+  /* ======================
+     💳 AMPLOP
+  ====================== */
+  amplop: [
+    {
+      bank: "BCA",
+      nomor: "3560194012",
+      nama: "Khoirul Anwar"
+    },
+    {
+      bank: "BRI",
+      nomor: "3793 0105 1428 538",
+      nama: "Rizza Lutfi Khasanah"
+    },
+    {
+      bank: "MANDIRI",
+      nomor: "1360031676460",
+      nama: "Rizza Lutfi Khasanah"
+    }
+  ]
 
 };

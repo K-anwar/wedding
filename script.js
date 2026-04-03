@@ -130,9 +130,14 @@ async function loadUcapan(){
   // 🔥 CEGAH TABRAKAN REQUEST
   if(isLoading) return;
   isLoading = true;
-  
-  let localTimeout;
+
   const loader = document.getElementById("loading-more");
+
+  if(loader){
+  loader.innerText = "⏳ Memuat data...";
+  }
+
+  let localTimeout;
 
   try{
     const controller = new AbortController();
@@ -366,6 +371,15 @@ function showToast(message, type = "success") {
 }
 
 /* ======================
+   🎯 RESET SUBMIT
+====================== */
+function resetSubmit(btn){
+  btn.disabled = false;
+  btn.innerText = "Kirim Ucapan";
+  isSubmitting = false;
+}
+
+/* ======================
    🎯 MAIN LOAD
 ====================== */
 document.addEventListener("DOMContentLoaded", () => {
@@ -475,45 +489,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = this.status.value;
     const ucapan = this.ucapan.value.trim();
 
-    
-    if(isSubmitting) return;
-      isSubmitting = true;
+    if(isSubmitting){
+      showToast("Sedang diproses...", "warning");
+    return;
+    }
+    isSubmitting = true;
 
     // 🔒 VALIDASI ORIGIN
     if(window.location.origin !== allowedOrigin){
     showToast("Akses tidak valid ❌", "error");
+    isSubmitting = false;
     return;
     }
 
     // 🔥 VALIDASI
     if(!nama || !jumlah || !status || !ucapan){
       showToast("Mohon isi semua data 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
     if(nama.length < 2){
       showToast("Nama terlalu pendek 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
     if(nama.length > 30){
       showToast("Nama terlalu panjang 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
     if(ucapan.length < 5){
       showToast("Ucapan terlalu pendek 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
     if(ucapan.length > 200){
       showToast("Ucapan terlalu panjang 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
     // 🔒 ANTI LINK SPAM
     if(/http|www|\.com/i.test(ucapan)){
       showToast("Tidak boleh mengandung link 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
@@ -521,6 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const now = Date.now();
     if(now - lastSubmitTime < SUBMIT_DELAY){
       showToast("Tunggu beberapa detik 🙏", "warning");
+      isSubmitting = false;
       return;
     }
     lastSubmitTime = now;
@@ -532,6 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if(spamCheck){
       showToast("Ucapan sudah pernah dikirim 🙏", "warning");
+      isSubmitting = false;
       return;
     }
 
@@ -576,6 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for(let word of bannedHard){
       if(cleanText.includes(word)){
         showToast("Mohon gunakan kata yang sopan 🙏", "warning");
+        isSubmitting = false;
       return;
       }
     }
@@ -635,8 +661,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tempEl.remove();
       showToast("Server tidak merespon ❌", "error");
 
-      btn.disabled = false;
-      btn.innerText = "Kirim Ucapan";
+      resetSubmit(btn);
       return;
     }
 
@@ -652,15 +677,12 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast("Gagal mengirim ❌", "error");
     }
 
-    btn.disabled = false;
-    btn.innerText = "Kirim Ucapan";
+    resetSubmit(btn);
     return;
   }
 
   // ✅ sukses
-  btn.disabled = false;
-  btn.innerText = "Kirim Ucapan";
-  isSubmitting = false;
+  resetSubmit(btn);
 
 
 } catch (err) {
@@ -668,9 +690,7 @@ document.addEventListener("DOMContentLoaded", () => {
   showToast("Gagal mengirim, cek koneksi atau coba lagi 🙏", "warning");
   console.log(err);
 
-  btn.disabled = false;
-  btn.innerText = "Kirim Ucapan";
-  isSubmitting = false;
+  resetSubmit(btn);
 }
 
   });
