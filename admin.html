@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin RSVP</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+}
+.card {
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+</style>
+</head>
+<body>
+
+<h2>Dashboard RSVP</h2>
+<div id="data"></div>
+
+<script>
+const SCRIPT_URL = DATA.config.scriptURL;
+
+async function loadData(){
+  const res = await fetch(SCRIPT_URL);
+  let data = await res.json();
+
+  const container = document.getElementById("data");
+
+  let html = "";
+
+  data.reverse().forEach(item => {
+    html += `
+      <div class="card">
+        <b>${item.nama}</b> (${item.status})
+        <br>${item.ucapan}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+loadData();
+setInterval(loadData, 5000);
+</script>
+
+</body>
+</html>

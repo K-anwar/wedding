@@ -13,8 +13,10 @@ const DATA = {
   },
 
   config: {
-    scriptURL: "https://script.google.com/macros/s/AKfycbxynEpgBGD2vuXqcNugvGpm9gi7OIh1d8oOmY3fviP4nczMW7LtfsFiVT1jO3K1VdK1zg/exec",
-    refreshInterval: 5000
+    scriptURL: "https://script.google.com/macros/s/AKfycbx0Rc4_aUlpCXvB1jMRyE_Tma0C-gelhOD1pdbFOnxjMS5us_D5x85u8dZ8OrLJPAK3nQ/exec",
+    refreshInterval: 10000,
+    token: "ANWAR_SECRET_2026",
+    origin: "https://k-anwar.github.io"
   },
 
   acara: {

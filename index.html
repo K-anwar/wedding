@@ -20,6 +20,9 @@
 <meta name="twitter:description" content="Undangan pernikahan digital">
 <meta name="twitter:image" content="https://K-anwar.github.io/wedding/assets/img/thumbnail.png">
 
+<!-- THEME -->
+<meta name="theme-color" content="#0f172a">
+
 <title>Wedding Invitation</title>
 
 <link rel="stylesheet" href="style.css">
@@ -29,6 +32,11 @@
 </head>
 
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <h1>Loading Love Story...</h1>
+</div>  
 
 <!-- MUSIC -->
 <audio id="music" loop></audio>
@@ -172,10 +180,7 @@
   </p>
 
   <div id="ucapan-list"></div>
-
-<button id="loadMoreBtn" onclick="loadMoreUcapan()">
-  Tampilkan Lebih Banyak
-</button>
+  <div id="load-more-wrapper"></div>
 </section>
 
 <!-- AMPLOP -->
@@ -211,6 +216,14 @@
   <img id="lightbox-img">
   <div class="nav prev" onclick="prevSlide()">‹</div>
   <div class="nav next" onclick="nextSlide()">›</div>
+</div>
+
+<!-- SPARKLE -->
+<div id="sparkle-container"></div>
+
+<!-- MUSIC CONTROL -->
+<div id="music-control" onclick="toggleMusic()">
+  ▶️
 </div>
 
 <!-- SCRIPTS -->
