@@ -65,18 +65,18 @@ const DATA = {
     hero: "assets/img/foto.JPG",
     musik: "assets/music/music.mp3",
     galeri: [
-      "assets/img/foto.1.JPG",
-      "assets/img/foto.2.JPG",
-      "assets/img/foto.3.JPG",
-      "assets/img/foto.4.JPG",
-      "assets/img/foto.5.JPG",
-      "assets/img/foto.6.JPG",
-      "assets/img/foto.7.JPG",
-      "assets/img/foto.8.JPG",
-      "assets/img/foto.9.JPG",
-      "assets/img/foto.10.JPG",
-      "assets/img/foto.11.JPG",
-      "assets/img/foto.12.JPG",
+      "assets/img/foto-1.JPG",
+      "assets/img/foto-2.JPG",
+      "assets/img/foto-3.JPG",
+      "assets/img/foto-4.JPG",
+      "assets/img/foto-5.JPG",
+      "assets/img/foto-6.JPG",
+      "assets/img/foto-7.JPG",
+      "assets/img/foto-8.JPG",
+      "assets/img/foto-9.JPG",
+      "assets/img/foto-10.JPG",
+      "assets/img/foto-11.JPG",
+      "assets/img/foto-12.JPG",
     ]
   },
 
@@ -91,7 +91,7 @@ const DATA = {
     },
     {
       bank: "BRI",
-      nomor: "3793 0105 1428 538",
+      nomor: "379301051428538",
       nama: "Rizza Lutfi Khasanah"
     },
     {
