@@ -643,8 +643,6 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast("Terlalu cepat mengirim 🙏", "warning");
     } else if(result.result === "forbidden"){
       showToast("Akses ditolak ❌", "error");
-    } else if(result.result === "unauthorized"){
-      showToast("Token salah ❌", "error");
     } else {
       showToast("Gagal mengirim ❌", "error");
     }
