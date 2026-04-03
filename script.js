@@ -14,6 +14,7 @@ const LIMIT = 20;
 let hasMore = true;
 let lastLoadTime = 0;
 let scrollTimeout;
+let isSubmitting = false;
 
 const SUBMIT_DELAY = 5000;
 const SCRIPT_URL = DATA.config.scriptURL;
@@ -604,6 +605,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     this.reset();
 
+    if(isSubmitting) return;
+      isSubmitting = true;
+
     // kirim ke server
     try {
       const res = await fetch(SCRIPT_URL, {
@@ -655,6 +659,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ sukses
   btn.disabled = false;
   btn.innerText = "Kirim Ucapan";
+  isSubmitting = false;
+
 
 } catch (err) {
   tempEl.remove();
@@ -663,6 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btn.disabled = false;
   btn.innerText = "Kirim Ucapan";
+  isSubmitting = false;
 }
 
   });
