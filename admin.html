@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin RSVP</title>
+<title>Admin RSVP Premium</title>
 <script src="data.js"></script>
 
 <style>
@@ -11,22 +11,70 @@ body {
   color: white;
   padding: 20px;
 }
+
+h2 { margin-bottom: 10px; }
+
+.top-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+select, button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #60a5fa;
+  color: white;
+  cursor: pointer;
+}
+
 .card {
   background: rgba(255,255,255,0.08);
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 10px;
 }
+
+.stats {
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+img.qr {
+  margin-top: 10px;
+  border-radius: 8px;
+}
 </style>
 
 </head>
 <body>
 
-<h2>Dashboard RSVP</h2>
+<h2>💎 Admin RSVP Premium</h2>
+
+<div class="stats" id="stats"></div>
+
+<div class="top-bar">
+  <select id="filter">
+    <option value="all">Semua</option>
+    <option value="Hadir">Hadir</option>
+    <option value="Tidak Hadir">Tidak Hadir</option>
+  </select>
+
+  <button onclick="exportCSV()">📥 Export CSV</button>
+</div>
+
 <div id="data"></div>
 
 <script>
 const SCRIPT_URL = DATA.config.scriptURL;
+let globalData = [];
 
 function escapeHTML(str){
   return String(str).replace(/[&<>"']/g, m => ({
@@ -38,40 +86,96 @@ function escapeHTML(str){
   })[m]);
 }
 
+function generateQR(nama){
+  const url = `${window.location.origin}/?to=${encodeURIComponent(nama)}`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}`;
+}
+
+function renderStats(data){
+  const hadir = data.filter(x => x.status === "Hadir").length;
+  const tidak = data.filter(x => x.status === "Tidak Hadir").length;
+
+  document.getElementById("stats").innerHTML = `
+    <b>📊 Statistik</b><br>
+    Hadir: ${hadir}<br>
+    Tidak Hadir: ${tidak}<br>
+    Total: ${data.length}
+  `;
+}
+
+function renderData(){
+  const container = document.getElementById("data");
+  const filter = document.getElementById("filter").value;
+
+  let data = [...globalData];
+
+  if(filter !== "all"){
+    data = data.filter(x => x.status === filter);
+  }
+
+  let html = "";
+
+  data.reverse().forEach(item => {
+    html += `
+      <div class="card">
+        <b>${escapeHTML(item.nama)}</b> (${escapeHTML(item.status)})
+        <br>${escapeHTML(item.ucapan)}
+        <br><img class="qr" src="${generateQR(item.nama)}">
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
 async function loadData(){
   document.getElementById("data").innerHTML = "Loading...";
+
   try {
     const res = await fetch(SCRIPT_URL);
     if(!res.ok) throw new Error();
 
     let data = await res.json();
 
-    const container = document.getElementById("data");
+    globalData = data.map(item => ({
+      nama: item.nama || item.Nama,
+      status: item.status || item.Kehadiran,
+      ucapan: item.ucapan || item.Ucapan
+    }));
 
-    let html = "";
-
-    data.reverse().forEach(item => {
-      html += `
-        <div class="card">
-          <b>${escapeHTML(item.nama)}</b> (${escapeHTML(item.status)})
-          <br>${escapeHTML(item.ucapan)}
-        </div>
-      `;
-    });
-
-    container.innerHTML = html;
+    renderStats(globalData);
+    renderData();
 
   } catch {
     document.getElementById("data").innerHTML = "Gagal load data ❌";
   }
 }
 
+function exportCSV(){
+  let csv = "Nama,Status,Ucapan\n";
+
+  globalData.forEach(d => {
+    csv += `${d.nama},${d.status},${d.ucapan}\n`;
+  });
+
+  const blob = new Blob([csv], {type: "text/csv"});
+  const a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+  a.download = "rsvp.csv";
+  a.click();
+}
+
+// FILTER EVENT
+
+document.getElementById("filter").addEventListener("change", renderData);
+
 loadData();
+
 let adminInterval;
 
 function startAdminRefresh(){
   if(adminInterval) return;
-
   adminInterval = setInterval(loadData, 5000);
 }
 
@@ -89,6 +193,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 startAdminRefresh();
+
 </script>
 
 </body>
