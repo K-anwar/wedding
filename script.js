@@ -390,6 +390,50 @@ document.addEventListener("DOMContentLoaded", () => {
   document.documentElement.style.setProperty('--bg', DATA.theme.background);
   document.documentElement.style.setProperty('--text', DATA.theme.text);
 
+  /* TITLE */
+  document.title = DATA.pasangan.pria + " & " + DATA.pasangan.wanita + " Wedding";
+
+  /* META */
+  document.getElementById("meta-desc").setAttribute(
+  "content",
+  "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
+  );
+
+  /* OPEN GRAPH */
+  document.getElementById("og-title").setAttribute(
+  "content",
+    DATA.pasangan.pria + " & " + DATA.pasangan.wanita + " Wedding"
+  );
+
+  document.getElementById("og-desc").setAttribute(
+    "content",
+    "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
+  );
+
+  document.getElementById("og-image").setAttribute(
+    "content",
+    window.location.origin + "/" + DATA.media.hero
+  );
+
+  document.getElementById("og-url").setAttribute(
+    "content",
+    window.location.origin 
+  );
+
+  /* TWITTER */
+  document.getElementById("twitter-title").setAttribute(
+    "content",
+    DATA.pasangan.pria + " & " + DATA.pasangan.wanita
+  );
+  document.getElementById("twitter-image").setAttribute(
+    "content",
+    window.location.origin + "/" + DATA.media.hero
+  );
+  document.getElementById("twitter-desc").setAttribute(
+    "content",
+    "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
+  );
+
   /* MUSIC */
   document.getElementById("music").src = DATA.media.musik;
 
@@ -408,6 +452,13 @@ document.addEventListener("DOMContentLoaded", () => {
     DATA.pasangan.pria + " & " + DATA.pasangan.wanita;
 
   document.querySelector(".date").innerText = DATA.tanggal;
+
+  /* PRELOAD */
+  const preload = document.createElement("link");
+  preload.rel = "preload";
+  preload.as = "image";
+  preload.href = DATA.media.hero;
+  document.head.appendChild(preload);
 
   /* NAMA TAMU */
   const params = new URLSearchParams(window.location.search);

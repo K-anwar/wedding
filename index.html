@@ -5,28 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- SEO BASIC -->
-<meta name="description" content="Undangan Pernikahan Khoirul & Rizza">
+<meta name="description" content="" id="meta-desc">
 
 <!-- OPEN GRAPH (WA / FB / IG) -->
-<meta property="og:title" content="Wedding Khoirul & Rizza">
-<meta property="og:description" content="Kami mengundang Anda dalam hari bahagia kami">
-<meta property="og:image" content="https://K-anwar.github.io/wedding/assets/img/thumbnail.png">
-<meta property="og:url" content="https://K-anwar.github.io/wedding/">
+<meta property="og:title" content="" id="og-title">
+<meta property="og:description" content="" id="og-desc">
+<meta property="og:image" content="" id="og-image">
+<meta property="og:url" content="" id="og-url">
 <meta property="og:type" content="website">
 
 <!-- TWITTER -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Wedding Khoirul & Rizza">
-<meta name="twitter:description" content="Undangan pernikahan digital">
-<meta name="twitter:image" content="https://K-anwar.github.io/wedding/assets/img/thumbnail.png">
+<meta name="twitter:title" content="" id="twitter-title">
+<meta name="twitter:description" content="" id="twitter-desc">
+<meta name="twitter:image" content="" id="twitter-image">
 
 <!-- THEME -->
 <meta name="theme-color" content="#0f172a">
 
-<title>Wedding Invitation</title>
+<!-- TITLE -->
+<title id="dynamic-title">Wedding Invitation</title>
 
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="assets/icon/favicon.png" type="image/png">
+
+<link rel="preload" as="image" href="assets/img/foto.JPG">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
 </head>
@@ -47,7 +50,7 @@
     <p class="small">The Wedding Of</p>
     <h1 id="nama-opening"></h1>
     <p class="fade">Sebuah perjalanan cinta yang akan berlabuh dalam ikatan suci</p>
-    <button onclick="openInvitation()">Buka Undangan</button>
+    <button type="button" onclick="openInvitation()">Buka Undangan</button>
   </div>
 </div>
 
@@ -151,8 +154,8 @@
   <form class="rsvp-form">
 
   <div class="row">
-    <input type="text" name="nama" placeholder="Nama Anda" required>
-    <input type="number" name="jumlah" placeholder="Jumlah Tamu" min="1" required>
+    <input type="text" name="nama" placeholder="Nama Anda" autocomplete="name" required>
+    <input type="number" name="jumlah" placeholder="Jumlah Tamu" min="1" inputmode="numeric" required>
   </div>
 
   <select name="status" required>
@@ -161,7 +164,7 @@
     <option value="Tidak Hadir">Tidak Hadir</option>
   </select>
 
-  <textarea name="ucapan" placeholder="Tulis ucapan & doa..." required></textarea>
+  <textarea name="ucapan" placeholder="Tulis ucapan & doa..." autocomplete="off" required></textarea>
 
   <button type="submit">Kirim Ucapan</button>
 

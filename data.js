@@ -5,7 +5,7 @@ const DATA = {
   ====================== */
   config: {
     scriptURL: "https://script.google.com/macros/s/AKfycbwuKXrJP9baxXC6lkqKRC0GQoGExxPpke2ur1a2qUp4FkRdmKZb0O_JjAhCa7J88SM4BQ/exec",
-    origin: "https://k-anwar.github.io",
+    origin: window.location.origin,
     refreshInterval: 15000
   },
 
@@ -63,6 +63,7 @@ const DATA = {
   ====================== */
   media: {
     hero: "assets/img/foto.JPG",
+    thumbnail: "assets/img/thumbnail.png",
     musik: "assets/music/music.mp3",
     galeri: [
       "assets/img/foto-1.JPG",
