@@ -2,6 +2,8 @@
 <html>
 <head>
 <title>Admin RSVP</title>
+<script src="data.js"></script>
+
 <style>
 body {
   font-family: Arial;
@@ -16,6 +18,7 @@ body {
   border-radius: 10px;
 }
 </style>
+
 </head>
 <body>
 
@@ -25,28 +28,67 @@ body {
 <script>
 const SCRIPT_URL = DATA.config.scriptURL;
 
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[m]);
+}
+
 async function loadData(){
-  const res = await fetch(SCRIPT_URL);
-  let data = await res.json();
+  document.getElementById("data").innerHTML = "Loading...";
+  try {
+    const res = await fetch(SCRIPT_URL);
+    if(!res.ok) throw new Error();
 
-  const container = document.getElementById("data");
+    let data = await res.json();
 
-  let html = "";
+    const container = document.getElementById("data");
 
-  data.reverse().forEach(item => {
-    html += `
-      <div class="card">
-        <b>${item.nama}</b> (${item.status})
-        <br>${item.ucapan}
-      </div>
-    `;
-  });
+    let html = "";
 
-  container.innerHTML = html;
+    data.reverse().forEach(item => {
+      html += `
+        <div class="card">
+          <b>${escapeHTML(item.nama)}</b> (${escapeHTML(item.status)})
+          <br>${escapeHTML(item.ucapan)}
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+  } catch {
+    document.getElementById("data").innerHTML = "Gagal load data ❌";
+  }
 }
 
 loadData();
-setInterval(loadData, 5000);
+let adminInterval;
+
+function startAdminRefresh(){
+  if(adminInterval) return;
+
+  adminInterval = setInterval(loadData, 5000);
+}
+
+function stopAdminRefresh(){
+  clearInterval(adminInterval);
+  adminInterval = null;
+}
+
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden){
+    stopAdminRefresh();
+  } else {
+    startAdminRefresh();
+  }
+});
+
+startAdminRefresh();
 </script>
 
 </body>

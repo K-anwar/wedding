@@ -4,8 +4,8 @@ const DATA = {
      ⚙️ CONFIG (WAJIB)
   ====================== */
   config: {
-    scriptURL: "https://script.google.com/macros/s/AKfycbwuKXrJP9baxXC6lkqKRC0GQoGExxPpke2ur1a2qUp4FkRdmKZb0O_JjAhCa7J88SM4BQ/exec",
-    origin: window.location.origin,
+    scriptURL: "https://script.google.com/macros/s/AKfycbyxwAvdpqqjRHiPXoIZKcwqCAJuqc34EXzti4Wy2xh4mAdHWcYFyARVeLXhBgqy8amUcg/exec",
+    origin: "https://k-anwar.github.io",
     refreshInterval: 15000
   },
 

@@ -16,6 +16,7 @@ let lastLoadTime = 0;
 let scrollTimeout;
 let isSubmitting = false;
 
+const renderedIds = new Set();
 const SUBMIT_DELAY = 5000;
 const SCRIPT_URL = DATA.config.scriptURL;
 const allowedOrigin = DATA.config.origin;
@@ -171,6 +172,11 @@ async function loadUcapan(){
 
     data = data.filter(item => item.nama && item.ucapan);
 
+    if(offset === 0){
+      renderedIds.clear();
+      }
+
+
     offset += data.length;
 
     if(data.length < LIMIT){
@@ -189,14 +195,14 @@ async function loadUcapan(){
     if(allUcapan.length > 100){
       allUcapan = allUcapan.slice(0, 100);
     }
-
+    
     renderUcapan();
 
   } catch(err){
     if(err.name === "AbortError"){
       console.log("Request timeout");
     } else {
-      console.log("Error load", err);
+      showToast("Gagal memuat ucapan", "warning");
     }
   } finally {
     if(loader && hasMore){
@@ -219,9 +225,19 @@ function renderUcapan(){
 
   allUcapan.slice(existing).forEach(item => {
     if(!item.nama || !item.ucapan) return;
+  
+    const id = generateId(item.nama, item.ucapan, item.jumlah);
+
+    if(renderedIds.has(id)) return;
+    renderedIds.add(id);
 
     const el = document.createElement("div");
-    el.classList.add("ucapan-item");
+    el.classList.add("ucapan-item", "new-item");
+    el.style.borderLeft = "3px solid #60a5fa";
+    el.style.transition = "border-left 0.5s ease";
+    setTimeout(() => {
+      el.style.borderLeft = "3px solid transparent";
+    }, 3000);
 
     el.innerHTML = `
       <b>${escapeHTML(item.nama)}</b> 
@@ -242,6 +258,9 @@ function addOptimisticUcapan(nama, status, jumlah, finalText){
 
   const el = document.createElement("div");
   el.classList.add("ucapan-item", "sending-item");
+
+  const id = generateId(nama, finalText, jumlah);
+  renderedIds.add(id);
 
   el.dataset.nama = nama;
   el.dataset.ucapan = finalText; // ✅ FIX
@@ -296,6 +315,21 @@ function escapeHTML(str){
 }
 
 /* ======================
+   🎯 GENERATE ID
+====================== */
+function generateId(nama, ucapan, jumlah){
+  const raw = `${nama}_${ucapan}_${jumlah}`;
+  
+  let hash = 0;
+  for(let i = 0; i < raw.length; i++){
+    hash = (hash << 5) - hash + raw.charCodeAt(i);
+    hash |= 0;
+  }
+
+  return hash.toString();
+}
+
+/* ======================
    🎯 TOGGLE MUSIC
 ====================== */
 function toggleMusic(){
@@ -317,7 +351,7 @@ function toggleMusic(){
    🎯 LOAD MORE
 ====================== */
 function startAutoRefresh(){
-  if(refreshInterval) return;
+  if(refreshInterval !== null) return;
 
   refreshInterval = setInterval(() => {
 
@@ -669,7 +703,12 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.innerText = "Mengirim...";
 
     const list = document.getElementById("ucapan-list");
-    if(list) list.scrollTop = 0;
+    if(list){
+      list.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
 
     const notif = document.getElementById("notif");
     notif.classList.add("show");
@@ -735,6 +774,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ sukses
 
+  setTimeout(() => {
   if(tempEl){
     tempEl.classList.remove("sending-item");
     tempEl.classList.add("sent-item");
@@ -746,6 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
       status.classList.add("sent");
     }
   }
+}, 500);
 
   resetSubmit(btn);
 
@@ -949,6 +990,6 @@ window.addEventListener("scroll", () => {
 
     scrollTimeout = null;
 
-  }, 100);
+  }, 100); 
 
-});
+}, { passive: true });
