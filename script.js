@@ -215,10 +215,9 @@ function renderUcapan(){
   const container = document.getElementById("ucapan-list");
   if(!container) return;
 
-  container.innerHTML = "";
+  const existing = container.querySelectorAll(".ucapan-item").length;
 
-  // 🔥 render ucapan dulu
-  allUcapan.forEach(item => {
+  allUcapan.slice(existing).forEach(item => {
     if(!item.nama || !item.ucapan) return;
 
     const el = document.createElement("div");
@@ -321,11 +320,6 @@ function startAutoRefresh(){
   if(refreshInterval) return;
 
   refreshInterval = setInterval(() => {
-
-    // 🔥 reset & reload dari awal
-    offset = 0;
-    allUcapan = [];
-    hasMore = true;
 
     loadUcapan();
 
@@ -668,6 +662,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // tampil loading dulu
     const tempEl = addOptimisticUcapan(nama, status, jumlah, finalText);
+    if(!tempEl) return;
 
     const btn = this.querySelector("button");
     btn.disabled = true;
@@ -717,24 +712,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   // 🔥 CEK RESPONSE BACKEND
-  if(result.result !== "success"){
+  if(result.result === "spam"){
     tempEl.remove();
+    showToast("Terlalu cepat mengirim 🙏", "warning");
+    resetSubmit(btn);
+    return;
+  }
 
-    if(result.result === "spam"){
-      showToast("Terlalu cepat mengirim 🙏", "warning");
-    } else if(result.result === "forbidden"){
-      showToast("Akses ditolak ❌", "error");
-    } else {
-      showToast("Gagal mengirim ❌", "error");
-    }
+  if(result.result === "forbidden"){
+    tempEl.remove();
+    showToast("Akses ditolak ❌", "error");
+    resetSubmit(btn);
+    return;
+  }
 
+  if(result.result && result.result !== "success"){
+    tempEl.remove();
+    showToast("Gagal mengirim ❌", "error");
     resetSubmit(btn);
     return;
   }
 
   // ✅ sukses
-  resetSubmit(btn);
 
+  if(tempEl){
+    tempEl.classList.remove("sending-item");
+    tempEl.classList.add("sent-item");
+
+    const status = tempEl.querySelector(".status");
+    if(status){
+      status.innerText = "✔ Terkirim";
+      status.classList.remove("sending");
+      status.classList.add("sent");
+    }
+  }
+
+  resetSubmit(btn);
 
 } catch (err) {
   tempEl.remove();
