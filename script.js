@@ -176,7 +176,6 @@ async function loadUcapan(){
       renderedIds.clear();
       }
 
-
     offset += data.length;
 
     if(data.length < LIMIT){
