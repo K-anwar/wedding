@@ -426,36 +426,6 @@ document.addEventListener("DOMContentLoaded", () => {
   "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
   );
 
-  /* OPEN GRAPH */
-  document.getElementById("og-title").setAttribute(
-  "content",
-    DATA.pasangan.pria + " & " + DATA.pasangan.wanita + " Wedding"
-  );
-
-  document.getElementById("og-desc").setAttribute(
-    "content",
-    "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
-  );
-
-  document.getElementById("og-url").setAttribute(
-    "content",
-    window.location.origin 
-  );
-
-  /* TWITTER */
-  document.getElementById("twitter-title").setAttribute(
-    "content",
-    DATA.pasangan.pria + " & " + DATA.pasangan.wanita
-  );
-  document.getElementById("twitter-image").setAttribute(
-    "content",
-    window.location.origin + "/" + DATA.media.hero
-  );
-  document.getElementById("twitter-desc").setAttribute(
-    "content",
-    "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
-  );
-
   /* MUSIC */
   document.getElementById("music").src = DATA.media.musik;
 
