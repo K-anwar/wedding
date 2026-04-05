@@ -437,11 +437,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "Undangan pernikahan " + DATA.pasangan.pria + " & " + DATA.pasangan.wanita
   );
 
-  document.getElementById("og-image").setAttribute(
-    "content",
-    window.location.origin + "/" + DATA.media.hero
-  );
-
   document.getElementById("og-url").setAttribute(
     "content",
     window.location.origin 
