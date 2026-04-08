@@ -20,6 +20,7 @@ const renderedIds = new Set();
 const SUBMIT_DELAY = 5000;
 const SCRIPT_URL = DATA.config.scriptURL;
 const allowedOrigin = DATA.config.origin;
+const isMobile = window.innerWidth <= 768;
 
 /* ======================
    🎯 ERROR HANDLER
@@ -112,7 +113,7 @@ function startSlider(){
     slides.style.transition = "0.6s ease";
     slides.style.transform = `translateX(-${index * 220}px)`;
 
-    if(index >= images.length * 2){
+    if(index >= loopImages.length - images.length){
       setTimeout(() => {
         slides.style.transition = "none";
         index = images.length;
@@ -120,7 +121,7 @@ function startSlider(){
       }, 600);
     }
 
-  }, 2500);
+ }, isMobile ? 4000 : 2500);
 }
 
 /* ======================
@@ -191,8 +192,8 @@ async function loadUcapan(){
 
     allUcapan = [...allUcapan, ...data];
 
-    if(allUcapan.length > 100){
-      allUcapan = allUcapan.slice(0, 100);
+    if(allUcapan.length > (isMobile ? 50 : 100)){
+      allUcapan = allUcapan.slice(allUcapan.length - (isMobile ? 50 : 100));
     }
     
     renderUcapan();
@@ -430,8 +431,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("music").src = DATA.media.musik;
 
   /* HERO */
+  const heroImage = isMobile 
+    ? DATA.media.hero.replace(".JPG", "-small.JPG")
+    : DATA.media.hero;
+
   document.querySelector(".hero").style.background =
-    `url(${DATA.media.hero}) center/cover`;
+    `url(${heroImage}) center/cover`;
 
   /* NAMA */
   document.getElementById("nama-opening").innerText =
@@ -444,13 +449,6 @@ document.addEventListener("DOMContentLoaded", () => {
     DATA.pasangan.pria + " & " + DATA.pasangan.wanita;
 
   document.querySelector(".date").innerText = DATA.tanggal;
-
-  /* PRELOAD */
-  const preload = document.createElement("link");
-  preload.rel = "preload";
-  preload.as = "image";
-  preload.href = DATA.media.hero;
-  document.head.appendChild(preload);
 
   /* NAMA TAMU */
   const params = new URLSearchParams(window.location.search);
@@ -480,15 +478,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* GALERI */
   const slides = document.querySelector(".slides");
-  images = DATA.media.galeri;
+  
+  // 🎯 MODE ADAPTIVE (MOBILE vs DESKTOP)
+  images = isMobile 
+    ? DATA.media.galeri.slice(0, 5) // mobile cuma 8 gambar
+    : DATA.media.galeri;
 
-  let loopImages = [...images, ...images, ...images];
+  // 🔥 SLIDER LEBIH RINGAN
+  window.loopImages = isMobile
+  ? [...images]
+  : [...images, ...images];
 
   loopImages.forEach((img, i) => {
     slides.innerHTML += `
-      <img src="${img}" data-index="${i % images.length}" draggable="false">
+      <img 
+        src="${img}" 
+        loading="lazy"
+        data-index="${i % images.length}" 
+        draggable="false">
     `;
-  });
+   });
 
   index = images.length;
   slides.style.transform = `translateX(-${index * 220}px)`;
@@ -796,23 +805,15 @@ initReveal();
 /* ======================
    🎯 PARALLAX MOUSE (3D EFFECT)
 ====================== */
-if(window.innerWidth > 768){
-
+if(!isMobile){
   document.addEventListener("mousemove", (e) => {
-
     const x = (e.clientX / window.innerWidth - 0.5) * 10;
     const y = (e.clientY / window.innerHeight - 0.5) * 10;
 
     document.querySelectorAll(".dark").forEach(el => {
-      el.style.transform = `
-        rotateX(${ -y }deg) 
-        rotateY(${ x }deg)
-        translateY(-5px)
-      `;
+      el.style.transform = `rotateX(${ -y }deg) rotateY(${ x }deg)`;
     });
-
   });
-
 }
 
 /* ======================
@@ -862,8 +863,8 @@ function createPetal(){
   }, 10000);
 }
 
-if(window.innerWidth > 768){
-  setInterval(createPetal, 800);
+if(!isMobile){
+  setInterval(createPetal, 1200); // lebih ringan
 } // untuk mengaktifkan petal, bisa di-uncomment
 
 

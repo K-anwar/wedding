@@ -659,3 +659,28 @@ body {
     opacity: 1;
   }
 }
+
+/* ======================
+   🚀 MOBILE PERFORMANCE MODE
+====================== */
+@media(max-width:768px){
+
+  .dark {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .dark:hover {
+    transform: none !important;
+  }
+
+  .slides img {
+    width: 140px;
+    height: 200px;
+  }
+
+  #sparkle-container {
+    display: none; /* matikan efek */
+  }
+
+}

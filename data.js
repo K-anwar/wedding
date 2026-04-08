@@ -6,7 +6,7 @@ const DATA = {
   config: {
     scriptURL: "https://script.google.com/macros/s/AKfycbyxwAvdpqqjRHiPXoIZKcwqCAJuqc34EXzti4Wy2xh4mAdHWcYFyARVeLXhBgqy8amUcg/exec",
     origin: "https://k-anwar.github.io",
-    refreshInterval: 15000
+    refreshInterval: 30000
   },
 
   /* ======================

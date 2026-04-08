@@ -23,13 +23,26 @@
 <!-- THEME -->
 <meta name="theme-color" content="#0f172a">
 
+<!-- PREFETCH -->
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://script.google.com">
+
 <!-- TITLE -->
 <title id="dynamic-title">Wedding Invitation</title>
 
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="assets/icon/favicon.png" type="image/png">
 
-<link rel="preload" as="image" href="assets/img/foto.JPG">
+<script>
+if(window.innerWidth > 768){
+  const preload = document.createElement("link");
+  preload.rel = "preload";
+  preload.as = "image";
+  preload.href = "assets/img/foto.JPG";
+  document.head.appendChild(preload);
+}
+</script>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
 </head>
