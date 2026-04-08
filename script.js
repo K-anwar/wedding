@@ -20,7 +20,8 @@ const renderedIds = new Set();
 const SUBMIT_DELAY = 5000;
 const SCRIPT_URL = DATA.config.scriptURL;
 const allowedOrigin = DATA.config.origin;
-const isMobile = window.innerWidth <= 768;
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
 
 /* ======================
    🎯 ERROR HANDLER
@@ -111,13 +112,15 @@ function startSlider(){
     index++;
 
     slides.style.transition = "0.6s ease";
-    slides.style.transform = `translateX(-${index * 220}px)`;
+    const slideWidth = slides.querySelector("img").offsetWidth + 15;
+    slides.style.transform = `translateX(-${index * slideWidth}px)`;
 
     if(index >= loopImages.length - images.length){
       setTimeout(() => {
         slides.style.transition = "none";
         index = images.length;
-        slides.style.transform = `translateX(-${index * 220}px)`;
+        const slideWidth = slides.querySelector("img").offsetWidth + 15;
+        slides.style.transform = `translateX(-${index * slideWidth}px)`;
       }, 600);
     }
 
@@ -431,9 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("music").src = DATA.media.musik;
 
   /* HERO */
-  const heroImage = isMobile 
-    ? DATA.media.hero.replace(".JPG", "-small.JPG")
-    : DATA.media.hero;
+  const heroImage = DATA.media.hero;
 
   document.querySelector(".hero").style.background =
     `url(${heroImage}) center/cover`;
@@ -500,7 +501,8 @@ document.addEventListener("DOMContentLoaded", () => {
    });
 
   index = images.length;
-  slides.style.transform = `translateX(-${index * 220}px)`;
+  const slideWidth = slides.querySelector("img").offsetWidth + 15;
+  slides.style.transform = `translateX(-${index * slideWidth}px)`;
 
   slides.addEventListener("mousedown", () => {
     clearInterval(sliderInterval);
