@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
     isSubmitting = true;
 
     // 🔒 VALIDASI ORIGIN
-    if(!window.location.origin.includes("k-anwar.github.io")){
+    if(window.location.origin !== DATA.config.origin){
     showToast("Akses tidak valid ❌", "error");
     isSubmitting = false;
     return;
