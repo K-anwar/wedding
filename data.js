@@ -62,22 +62,22 @@ const DATA = {
      🖼️ MEDIA
   ====================== */
   media: {
-    hero: "assets/img/foto.JPG",
+    hero: "assets/img/foto.jpg",
     thumbnail: "assets/img/thumbnail.png",
     musik: "assets/music/music.mp3",
     galeri: [
-      "assets/img/foto-1.JPG",
-      "assets/img/foto-2.JPG",
-      "assets/img/foto-3.JPG",
-      "assets/img/foto-4.JPG",
-      "assets/img/foto-5.JPG",
-      "assets/img/foto-6.JPG",
-      "assets/img/foto-7.JPG",
-      "assets/img/foto-8.JPG",
-      "assets/img/foto-9.JPG",
-      "assets/img/foto-10.JPG",
-      "assets/img/foto-11.JPG",
-      "assets/img/foto-12.JPG",
+      "assets/img/foto-1.jpg",
+      "assets/img/foto-2.jpg",
+      "assets/img/foto-3.jpg",
+      "assets/img/foto-4.jpg",
+      "assets/img/foto-5.jpg",
+      "assets/img/foto-6.jpg",
+      "assets/img/foto-7.jpg",
+      "assets/img/foto-8.jpg",
+      "assets/img/foto-9.jpg",
+      "assets/img/foto-10.jpg",
+      "assets/img/foto-11.jpg",
+      "assets/img/foto-12.jpg",
     ]
   },
 
